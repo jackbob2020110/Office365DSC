@@ -63,7 +63,7 @@ RequiredModules = @(@{ModuleName="ReverseDSC";ModuleVersion="1.9.2.11"})
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @("modules\Office365DSCUtil.psm1")
+NestedModules = @("modules\Office365DSCUtil.psm1","modules\SessionManager.psm1")
 
 # Functions to export from this module
 #FunctionsToExport = '*'
