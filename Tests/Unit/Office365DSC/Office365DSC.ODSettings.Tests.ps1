@@ -1,9 +1,9 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string] 
+    [string]
     $CmdletModule = (Join-Path -Path $PSScriptRoot `
-                                         -ChildPath "..\Stubs\Office365DSC.psm1" `
+                                         -ChildPath "..\Stubs\Office365.psm1" `
                                          -Resolve)
 )
 
@@ -22,10 +22,9 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
         $GlobalAdminAccount = New-Object System.Management.Automation.PSCredential ("tenantadmin", $secpasswd)
 
         Mock -CommandName Test-SPOServiceConnection -MockWith {
-
         }
 
-        # Test contexts 
+        # Test contexts
         Context -Name "Check OneDrive Quota" -Fixture {
             $testParams = @{
                 OneDriveStorageQuota = 1024
@@ -33,20 +32,20 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                 GlobalAdminAccount = $GlobalAdminAccount
             }
 
-            Mock -CommandName Set-SPOTenant -MockWith { 
+            Mock -CommandName Set-SPOTenant -MockWith {
                 return @{OneDriveStorageQuota = $null}
             }
 
-            Mock -CommandName Get-SPOTenant -MockWith { 
+            Mock -CommandName Get-SPOTenant -MockWith {
                 return $null
             }
-            
+
 
             It "Should return false from the Test method" {
                 Test-TargetResource @testParams | Should Be $false
             }
 
-            It "Creates the site collection in the Set method" {
+            It "Updates the OneDriveSettings in the Set method" {
                 Set-TargetResource @testParams
             }
         }
@@ -69,7 +68,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                 GlobalAdminAccount = $GlobalAdminAccount
             }
 
-            Mock -CommandName Get-SPOTenant -MockWith { 
+            Mock -CommandName Get-SPOTenant -MockWith {
                 return @{
                     OneDriveStorageQuota = "1024"
                 }
@@ -88,7 +87,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
             }
 
             It "Should return Ensure equals to Present from the Get method" {
-                (Get-TargetResource @testParams).Ensure | Should Be "Present" 
+                (Get-TargetResource @testParams).Ensure | Should Be "Present"
             }
 
             It "Should configure OneDrive settings in the Set method" {
@@ -103,11 +102,11 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
         Context -Name "ReverseDSC Tests" -Fixture {
             $testParams = @{
                 OneDriveStorageQuota = 1024
-                CentralAdminUrl = "https://smaystate-admin.sharepoint.com"
+                CentralAdminUrl = "https://contoso.sharepoint.com"
                 GlobalAdminAccount = $GlobalAdminAccount
             }
 
-            Mock -CommandName Get-SPOTenant -MockWith { 
+            Mock -CommandName Get-SPOTenant -MockWith {
                 return @{
                     OneDriveStorageQuota = "1024"
                 }
